@@ -79,6 +79,65 @@ class gateio (Exchange):
             },
         })
 
+    async def fetch_order(self, id, symbol=None, params={}):
+        await self.load_markets()
+        response = await self.privatePostGetOrder(self.extend({
+            'orderNumber': id,
+            'currencyPair':self.market_id(symbol),
+        }, params))
+        return self.parse_order(response['order'])
+
+    def parse_order_status(self, status):
+        if status == 'open':
+            return 'open'
+        elif status == 'done':
+            return 'closed'
+        elif status == 'cancelled':
+            return 'canceled'
+        return status
+
+    def parse_order(self, order, market=None):
+        side = None
+        type = None
+        status = None
+        side = order['type']
+        type = 'limit'
+        status = self.parse_order_status(order['status'])
+        symbol = None
+        if not market:
+            if 'currencyPair' in order:
+                if order['currencyPair'] in self.markets_by_id:
+                    marketId = order['currencyPair']
+                    market = self.markets_by_id[marketId]
+        if market:
+            symbol = market['symbol']
+        timestamp = int(order['timestamp'])*1000
+        amount = float(order['amount'])
+        filled = float(order['filledAmount'])
+        remaining = amount - filled
+        price = float(order['rate'])
+        average = order['filledRate']
+        cost = average * filled
+        fee = order['fee']
+        result = {
+            'info': order,
+            'id': str(order['orderNumber']),
+            'timestamp': timestamp,
+            'datetime': self.iso8601(timestamp),
+            'symbol': symbol,
+            'type': type,
+            'side': side,
+            'price': price,
+            'average': average,
+            'cost': cost,
+            'amount': amount,
+            'filled': filled,
+            'remaining': remaining,
+            'status': status,
+            'fee': fee,
+        }
+        return result
+
     async def fetch_markets(self):
         response = await self.publicGetMarketinfo()
         markets = self.safe_value(response, 'pairs')
@@ -309,6 +368,6 @@ class gateio (Exchange):
     async def request(self, path, api='public', method='GET', params={}, headers=None, body=None):
         response = await self.fetch2(path, api, method, params, headers, body)
         if 'result' in response:
-            if response['result'] != 'true':
+            if not (response['result'] == 'true' or response['result'] == True):
                 raise ExchangeError(self.id + ' ' + self.json(response))
         return response
