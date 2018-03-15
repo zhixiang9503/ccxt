@@ -514,6 +514,10 @@ class cobinhood (Exchange):
             'id': response['result']['withdrawal_id'],
             'info': response,
         }
+    
+    def nonce(self):
+        ms = Exchange.milliseconds()
+        return ms
 
     def sign(self, path, api='public', method='GET', params={}, headers=None, body=None):
         url = self.urls['api']['web'] + '/' + self.implode_params(path, params)
