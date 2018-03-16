@@ -39,6 +39,16 @@ class tidex (liqui):
                 'private': {
                     'post': [
                         'getInfoExt',
+                        'getInfo',
+                        'Trade',
+                        'ActiveOrders',
+                        'OrderInfo',
+                        'CancelOrder',
+                        'TradeHistory',
+                        'CoinDepositAddress',
+                        'WithdrawCoin',
+                        'CreateCoupon',
+                        'RedeemCoupon',
                     ],
                 },
                 'web': {
