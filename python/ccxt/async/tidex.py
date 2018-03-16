@@ -36,6 +36,11 @@ class tidex (liqui):
                 ],
             },
             'api': {
+                'private': {
+                    'post': [
+                        'getInfoExt',
+                    ],
+                },
                 'web': {
                     'get': [
                         'currency',
@@ -57,6 +62,28 @@ class tidex (liqui):
                 },
             },
         })
+
+    async def fetch_balance(self, params={}):
+            await self.load_markets()
+            response = await self.privatePostGetInfoExt()
+            balances = response['return']
+            result = {'info': balances}
+            funds = balances['funds']
+            currencies = list(funds.keys())
+            for c in range(0, len(currencies)):
+                currency = currencies[c]
+                uppercase = currency.upper()
+                uppercase = self.common_currency_code(uppercase)
+                free = funds[currency]['value']
+                used = funds[currency]['inOrders']
+                total = free + used
+                account = {
+                    'free': free,
+                    'used': used,
+                    'total': total,
+                }
+                result[uppercase] = account
+            return self.parse_balance(result)
 
     def common_currency_code(self, currency):
         if not self.substituteCommonCurrencyCodes:
