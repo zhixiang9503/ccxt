@@ -116,9 +116,9 @@ class gateio (Exchange):
         filled = float(order['filledAmount'])
         remaining = amount - filled
         price = float(order['rate'])
-        average = order['filledRate']
+        average = float(order['filledRate'])
         cost = average * filled
-        fee = order['fee']
+        fee = float(order['fee'])
         result = {
             'info': order,
             'id': str(order['orderNumber']),
