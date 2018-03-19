@@ -69,17 +69,12 @@ module.exports = class ccex extends Exchange {
                     'maker': 0.2 / 100,
                 },
             },
+            'commonCurrencies': {
+                'IOT': 'IoTcoin',
+                'BLC': 'Cryptobullcoin',
+                'XID': 'InternationalDiamond',
+            },
         });
-    }
-
-    commonCurrencyCode (currency) {
-        if (currency === 'IOT')
-            return 'IoTcoin';
-        if (currency === 'BLC')
-            return 'Cryptobullcoin';
-        if (currency === 'XID')
-            return 'InternationalDiamond';
-        return currency;
     }
 
     async fetchMarkets () {
@@ -201,6 +196,7 @@ module.exports = class ccex extends Exchange {
         let symbol = undefined;
         if (market)
             symbol = market['symbol'];
+        let last = parseFloat (ticker['lastprice']);
         return {
             'symbol': symbol,
             'timestamp': timestamp,
@@ -208,12 +204,14 @@ module.exports = class ccex extends Exchange {
             'high': parseFloat (ticker['high']),
             'low': parseFloat (ticker['low']),
             'bid': parseFloat (ticker['buy']),
+            'bidVolume': undefined,
             'ask': parseFloat (ticker['sell']),
+            'askVolume': undefined,
             'vwap': undefined,
             'open': undefined,
-            'close': undefined,
-            'first': undefined,
-            'last': parseFloat (ticker['lastprice']),
+            'close': last,
+            'last': last,
+            'previousClose': undefined,
             'change': undefined,
             'percentage': undefined,
             'average': parseFloat (ticker['avg']),

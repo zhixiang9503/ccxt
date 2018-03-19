@@ -71,8 +71,13 @@ class tidex (liqui):
                     'maker': 0.1 / 100,
                 },
             },
+            'commonCurrencies': {
+                'MGO': 'WMGO',
+                'EMGO': 'MGO',
+            },
         })
 
+<<<<<<< HEAD
     async def fetch_balance(self, params={}):
             await self.load_markets()
             response = await self.privatePostGetInfoExt()
@@ -115,6 +120,8 @@ class tidex (liqui):
             return 'MGO'
         return currency
 
+=======
+>>>>>>> upstream/master
     async def fetch_currencies(self, params={}):
         currencies = await self.webGetCurrency(params)
         result = {}

@@ -68,17 +68,12 @@ class ccex extends Exchange {
                     'maker' => 0.2 / 100,
                 ),
             ),
+            'commonCurrencies' => array (
+                'IOT' => 'IoTcoin',
+                'BLC' => 'Cryptobullcoin',
+                'XID' => 'InternationalDiamond',
+            ),
         ));
-    }
-
-    public function common_currency_code ($currency) {
-        if ($currency === 'IOT')
-            return 'IoTcoin';
-        if ($currency === 'BLC')
-            return 'Cryptobullcoin';
-        if ($currency === 'XID')
-            return 'InternationalDiamond';
-        return $currency;
     }
 
     public function fetch_markets () {
@@ -200,6 +195,7 @@ class ccex extends Exchange {
         $symbol = null;
         if ($market)
             $symbol = $market['symbol'];
+        $last = floatval ($ticker['lastprice']);
         return array (
             'symbol' => $symbol,
             'timestamp' => $timestamp,
@@ -207,12 +203,14 @@ class ccex extends Exchange {
             'high' => floatval ($ticker['high']),
             'low' => floatval ($ticker['low']),
             'bid' => floatval ($ticker['buy']),
+            'bidVolume' => null,
             'ask' => floatval ($ticker['sell']),
+            'askVolume' => null,
             'vwap' => null,
             'open' => null,
-            'close' => null,
-            'first' => null,
-            'last' => floatval ($ticker['lastprice']),
+            'close' => $last,
+            'last' => $last,
+            'previousClose' => null,
             'change' => null,
             'percentage' => null,
             'average' => floatval ($ticker['avg']),

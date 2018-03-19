@@ -71,16 +71,12 @@ class ccex (Exchange):
                     'maker': 0.2 / 100,
                 },
             },
+            'commonCurrencies': {
+                'IOT': 'IoTcoin',
+                'BLC': 'Cryptobullcoin',
+                'XID': 'InternationalDiamond',
+            },
         })
-
-    def common_currency_code(self, currency):
-        if currency == 'IOT':
-            return 'IoTcoin'
-        if currency == 'BLC':
-            return 'Cryptobullcoin'
-        if currency == 'XID':
-            return 'InternationalDiamond'
-        return currency
 
     def fetch_markets(self):
         result = {}
@@ -190,6 +186,7 @@ class ccex (Exchange):
         symbol = None
         if market:
             symbol = market['symbol']
+        last = float(ticker['lastprice'])
         return {
             'symbol': symbol,
             'timestamp': timestamp,
@@ -197,12 +194,14 @@ class ccex (Exchange):
             'high': float(ticker['high']),
             'low': float(ticker['low']),
             'bid': float(ticker['buy']),
+            'bidVolume': None,
             'ask': float(ticker['sell']),
+            'askVolume': None,
             'vwap': None,
             'open': None,
-            'close': None,
-            'first': None,
-            'last': float(ticker['lastprice']),
+            'close': last,
+            'last': last,
+            'previousClose': None,
             'change': None,
             'percentage': None,
             'average': float(ticker['avg']),

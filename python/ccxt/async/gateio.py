@@ -218,6 +218,7 @@ class gateio (Exchange):
         symbol = None
         if market:
             symbol = market['symbol']
+        last = float(ticker['last'])
         return {
             'symbol': symbol,
             'timestamp': timestamp,
@@ -225,12 +226,14 @@ class gateio (Exchange):
             'high': float(ticker['high24hr']),
             'low': float(ticker['low24hr']),
             'bid': float(ticker['highestBid']),
+            'bidVolume': None,
             'ask': float(ticker['lowestAsk']),
+            'askVolume': None,
             'vwap': None,
             'open': None,
-            'close': None,
-            'first': None,
-            'last': float(ticker['last']),
+            'close': last,
+            'last': last,
+            'previousClose': None,
             'change': float(ticker['percentChange']),
             'percentage': None,
             'average': None,
