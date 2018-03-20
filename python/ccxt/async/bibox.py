@@ -32,6 +32,7 @@ class bibox (Exchange):
                 'fetchTickers': True,
                 'fetchOpenOrders': True,
                 'fetchClosedOrders': True,
+                'fetchOrder' : True,
                 'fetchMyTrades': True,
                 'fetchOHLCV': True,
                 'withdraw': True,
@@ -449,6 +450,15 @@ class bibox (Exchange):
         })
         orders = self.safe_value(response['result'], 'items', [])
         return self.parse_orders(orders, market, since, limit)
+
+    async def fetch_order(self, id, symbol=None, params={}):
+        openOrders = await self.fetch_open_orders(symbol)
+        closedOrders = await self.fetch_closed_orders(symbol)
+        orders = openOrders + closedOrders
+        for order in orders:
+            if order['id'] == id:
+                return order
+        raise OrderNotFound('exchange:%s order id: %s not Found'%(self.id,id))
 
     async def fetch_my_trades(self, symbol=None, since=None, limit=None, params={}):
         if not symbol:

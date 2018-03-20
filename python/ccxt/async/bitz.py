@@ -26,6 +26,7 @@ class bitz (Exchange):
                 'fetchTickers': True,
                 'fetchOHLCV': True,
                 'fetchOpenOrders': True,
+                'fetchOrder' : True,
             },
             'timeframes': {
                 '1m': '1m',
@@ -344,6 +345,13 @@ class bitz (Exchange):
             'coin': market['id'],
         }, params))
         return self.parse_orders(response['data'], market)
+
+    async def fetch_order(self, id, symbol=None, params={}):
+        openOrders = await self.fetch_open_orders(symbol)
+        for order in openOrders:
+            if order['id'] == id:
+                return order
+        raise OrderNotFound('exchange:%s order id: %s not Found'%(self.id,id))
 
     def nonce(self):
         currentTimestamp = self.seconds()
