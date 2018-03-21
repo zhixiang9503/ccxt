@@ -368,7 +368,7 @@ class zb (Exchange):
         }
         order = self.extend(order, params)
         response = await self.privateGetGetOrder(order)
-        return self.parse_order(response, None, True)
+        return self.parse_order(response, None)
 
     async def fetch_orders(self, symbol=None, since=None, limit=50, params={}):
         if not symbol:
@@ -434,11 +434,11 @@ class zb (Exchange):
         if market:
             symbol = market['symbol']
         price = order['price']
-        average = order['trade_price']
+        average = order['trade_price'] if 'trade_price' in order else 0.0
         filled = order['trade_amount']
         amount = order['total_amount']
         remaining = amount - filled
-        cost = order['trade_money']
+        cost = float(order['trade_money'])
         status = self.safe_string(order, 'status')
         if status is not None:
             status = self.parse_order_status(status)
